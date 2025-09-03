@@ -101,134 +101,134 @@
         <button onclick="showMain()">Back to Main</button>
     </div>
 
-    <script>
-        let count = parseInt(localStorage.getItem('waterCount')) || 0;
-        let timestamps = JSON.parse(localStorage.getItem('waterTimestamps')) || [];
-        let dailyGoal = parseInt(localStorage.getItem('dailyGoal')) || 8;
+<script>
+    // Define a unique prefix for this repository (change to 'repo2' for the dev testing repo)
+    const STORAGE_PREFIX = 'repo2'; // Change to 'repo2' for the dev testing repo
 
-        function formatDateTime(date) {
-            return date.toLocaleString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-            });
-        }
+    // Load data from localStorage with prefixed keys
+    let count = parseInt(localStorage.getItem(`${STORAGE_PREFIX}_waterCount`)) || 0;
+    let timestamps = JSON.parse(localStorage.getItem(`${STORAGE_PREFIX}_waterTimestamps`)) || [];
+    let dailyGoal = parseInt(localStorage.getItem(`${STORAGE_PREFIX}_dailyGoal`)) || 8;
 
-        function getDateString(date) {
-            return date.toISOString().split('T')[0]; // YYYY-MM-DD
-        }
-
-        function calculateStreak() {
-            const dailyIntakes = {};
-            timestamps.forEach(ts => {
-                const dateStr = getDateString(new Date(ts));
-                dailyIntakes[dateStr] = (dailyIntakes[dateStr] || 0) + 1;
-            });
-
-            let streak = 0;
-            let currentDate = new Date();
-            while (true) {
-                const dateStr = getDateString(currentDate);
-                const intake = dailyIntakes[dateStr] || 0;
-                if (intake >= dailyGoal) {
-                    streak++;
-                } else {
-                    break;
-                }
-                currentDate.setDate(currentDate.getDate() - 1);
-            }
-            return streak;
-        }
-
-        function getTodayCount() {
-            const todayStr = getDateString(new Date());
-            return timestamps.filter(ts => getDateString(new Date(ts)) === todayStr).length;
-        }
-
-        function updateDisplay() {
-            document.getElementById('count').innerText = count;
-            if (timestamps.length > 0) {
-                document.getElementById('lastFinished').innerText = `Last bottle finished: ${formatDateTime(new Date(timestamps[timestamps.length - 1]))}`;
-            } else {
-                document.getElementById('lastFinished').innerText = 'Last bottle finished: None';
-            }
-            document.getElementById('streak').innerText = calculateStreak();
-            const todayCount = getTodayCount();
-            document.getElementById('todayCount').innerText = todayCount;
-            document.getElementById('goalDisplay').innerText = dailyGoal;
-            const progressPercent = Math.min((todayCount / dailyGoal) * 100, 100);
-            document.getElementById('progressFill').style.width = `${progressPercent}%`;
-            document.getElementById('goal').value = dailyGoal;
-        }
-
-        function increment() {
-            count++;
-            timestamps.push(new Date().toISOString());
-            localStorage.setItem('waterCount', count);
-            localStorage.setItem('waterTimestamps', JSON.stringify(timestamps));
-            updateDisplay();
-        }
-
-        function decrement() {
-            if (count > 0) {
-                count--;
-                timestamps.pop();
-                localStorage.setItem('waterCount', count);
-                localStorage.setItem('waterTimestamps', JSON.stringify(timestamps));
-                updateDisplay();
-            }
-        }
-
-        document.getElementById('goal').addEventListener('change', (e) => {
-            dailyGoal = parseInt(e.target.value) || 8;
-            localStorage.setItem('dailyGoal', dailyGoal);
-            updateDisplay();
+    function formatDateTime(date) {
+        return date.toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
         });
+    }
 
-        function showSettings() {
-            document.getElementById('mainPage').style.display = 'none';
-            document.getElementById('settingsPage').style.display = 'block';
+    function getDateString(date) {
+        return date.toISOString().split('T')[0]; // YYYY-MM-DD
+    }
+
+    function calculateStreak() {
+        const dailyIntakes = {};
+        timestamps.forEach(ts => {
+            const dateStr = getDateString(new Date(ts));
+            dailyIntakes[dateStr] = (dailyIntakes[dateStr] || 0) + 1;
+        });
+        let streak = 0;
+        let currentDate = new Date();
+        while (true) {
+            const dateStr = getDateString(currentDate);
+            const intake = dailyIntakes[dateStr] || 0;
+            if (intake >= dailyGoal) {
+                streak++;
+            } else {
+                break;
+            }
+            currentDate.setDate(currentDate.getDate() - 1);
         }
+        return streak;
+    }
 
-        function showMain() {
-            document.getElementById('settingsPage').style.display = 'none';
-            document.getElementById('mainPage').style.display = 'block';
+    function getTodayCount() {
+        const todayStr = getDateString(new Date());
+        return timestamps.filter(ts => getDateString(new Date(ts)) === todayStr).length;
+    }
+
+    function updateDisplay() {
+        document.getElementById('count').innerText = count;
+        if (timestamps.length > 0) {
+            document.getElementById('lastFinished').innerText = `Last bottle finished: ${formatDateTime(new Date(timestamps[timestamps.length - 1]))}`;
+        } else {
+            document.getElementById('lastFinished').innerText = 'Last bottle finished: None';
+        }
+        document.getElementById('streak').innerText = calculateStreak();
+        const todayCount = getTodayCount();
+        document.getElementById('todayCount').innerText = todayCount;
+        document.getElementById('goalDisplay').innerText = dailyGoal;
+        const progressPercent = Math.min((todayCount / dailyGoal) * 100, 100);
+        document.getElementById('progressFill').style.width = `${progressPercent}%`;
+        document.getElementById('goal').value = dailyGoal;
+    }
+
+    function increment() {
+        count++;
+        timestamps.push(new Date().toISOString());
+        localStorage.setItem(`${STORAGE_PREFIX}_waterCount`, count);
+        localStorage.setItem(`${STORAGE_PREFIX}_waterTimestamps`, JSON.stringify(timestamps));
+        updateDisplay();
+    }
+
+    function decrement() {
+        if (count > 0) {
+            count--;
+            timestamps.pop();
+            localStorage.setItem(`${STORAGE_PREFIX}_waterCount`, count);
+            localStorage.setItem(`${STORAGE_PREFIX}_waterTimestamps`, JSON.stringify(timestamps));
             updateDisplay();
         }
+    }
 
-        // Service Worker and Notifications
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js').then(reg => {
-                document.getElementById('enableReminder').addEventListener('click', async () => {
-                    const permission = await Notification.requestPermission();
-                    if (permission === 'granted') {
-                        const intervalHours = parseInt(document.getElementById('interval').value);
-                        const intervalMs = intervalHours * 60 * 60 * 1000;
-                        const timestamp = Date.now() + intervalMs;
-                        reg.showNotification('Time to Drink Water!', {
-                            body: 'Stay hydrated! Increment your intake.',
-                            showTrigger: new TimestampTrigger(timestamp),
-                            data: { interval: intervalMs }
-                        });
-                        alert('Reminder scheduled!');
-                    } else {
-                        alert('Notifications permission denied.');
-                    }
-                });
+    document.getElementById('goal').addEventListener('change', (e) => {
+        dailyGoal = parseInt(e.target.value) || 8;
+        localStorage.setItem(`${STORAGE_PREFIX}_dailyGoal`, dailyGoal);
+        updateDisplay();
+    });
 
-                document.getElementById('disableReminder').addEventListener('click', async () => {
-                    const notifications = await reg.getNotifications({ includeTriggered: true });
-                    notifications.forEach(notification => notification.close());
-                    alert(`${notifications.length} reminder(s) cancelled.`);
-                });
+    function showSettings() {
+        document.getElementById('mainPage').style.display = 'none';
+        document.getElementById('settingsPage').style.display = 'block';
+    }
+
+    function showMain() {
+        document.getElementById('settingsPage').style.display = 'none';
+        document.getElementById('mainPage').style.display = 'block';
+        updateDisplay();
+    }
+
+    // Service Worker and Notifications
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js').then(reg => {
+            document.getElementById('enableReminder').addEventListener('click', async () => {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    const intervalHours = parseInt(document.getElementById('interval').value);
+                    const intervalMs = intervalHours * 60 * 60 * 1000;
+                    const timestamp = Date.now() + intervalMs;
+                    reg.showNotification('Time to Drink Water!', {
+                        body: 'Stay hydrated! Increment your intake.',
+                        showTrigger: new TimestampTrigger(timestamp),
+                        data: { interval: intervalMs }
+                    });
+                    alert('Reminder scheduled!');
+                } else {
+                    alert('Notifications permission denied.');
+                }
             });
-        }
+            document.getElementById('disableReminder').addEventListener('click', async () => {
+                const notifications = await reg.getNotifications({ includeTriggered: true });
+                notifications.forEach(notification => notification.close());
+                alert(`${notifications.length} reminder(s) cancelled.`);
+            });
+        });
+    }
 
-        // Automatically increment on page load (for NFC scan or visit)
-        increment();
-    </script>
-</body>
-</html>
+    // Automatically increment on page load (for NFC scan or visit)
+    increment();
+</script>
