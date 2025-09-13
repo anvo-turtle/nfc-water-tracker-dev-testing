@@ -71,15 +71,17 @@
 <body>
     <div id="mainPage">
         <h1>Water Intake Tracker</h1>
-        <p>Current intake: <span id="count">0</span> bottles</p>
-        <p id="lastFinished">Last bottle finished: None</p>
-        <button id="increment" onclick="increment()">+1</button>
-        <button id="decrement" onclick="decrement()">-1</button>
+        <p>Total Bottles: <span id="count">0</span> bottles</p>
+       
 
         <p>Current Streak: <span id="streak">0</span> days</p>
         <p>Today's Progress: <span id="todayCount">0</span> / <span id="goalDisplay">8</span></p>
         <div id="progressBar">
             <div id="progressFill"></div>
+ <p id="lastFinished">Last bottle finished: None</p>
+        <button id="increment" onclick="increment()">+1</button>
+        <button id="decrement" onclick="decrement()">-1</button>
+
         </div>
         <button onclick="showSettings()">Settings</button>
     </div>
