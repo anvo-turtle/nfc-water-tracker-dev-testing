@@ -78,7 +78,7 @@
     <div id="mainPage">
         <h1>Water Intake Tracker</h1>
         <p>Current Streak: <span id="streak">0</span> days</p>
-        <p>Today's Progress: <span id="todayCount">0</span> / <span id="goalDisplay">8</span></p>
+        <p>Today's Progress: <span id="todayCount">0</span> / <span id="goalDisplay">2</span></p>
         <div id="progressBar">
             <div id="progressFill"></div>
         </div>
@@ -118,7 +118,7 @@
     // Load data from localStorage with prefixed keys
     let count = parseInt(localStorage.getItem(`${STORAGE_PREFIX}_waterCount`)) || 0;
     let timestamps = JSON.parse(localStorage.getItem(`${STORAGE_PREFIX}_waterTimestamps`)) || [];
-    let dailyGoal = parseInt(localStorage.getItem(`${STORAGE_PREFIX}_dailyGoal`)) || 8;
+    let dailyGoal = parseInt(localStorage.getItem(`${STORAGE_PREFIX}_dailyGoal`)) || 2;
 
     function formatDateTime(date) {
         return date.toLocaleString('en-US', {
@@ -196,7 +196,7 @@
     }
 
     document.getElementById('goal').addEventListener('change', (e) => {
-        dailyGoal = parseInt(e.target.value) || 8;
+        dailyGoal = parseInt(e.target.value) || 2;
         localStorage.setItem(`${STORAGE_PREFIX}_dailyGoal`, dailyGoal);
         updateDisplay();
     });
